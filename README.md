@@ -30,6 +30,8 @@ docker-compose up -d
 ```
 Navigate to [http://localhost:8080/app_name](http://localhost:8080/app_name)
 
+&#8594; In production, this should be set up to run as a service.
+
 To stop:
 ```
 docker-compose down
