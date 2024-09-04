@@ -1,6 +1,16 @@
 # dockerized_rails
 A stock example repo for dockerizing Rails apps, particularly Blacklight apps that use an external Solr and SQLite
 
+## Note on DBs
+
+This set up makes some assumputions about your production database.
+
+This installs two cronjobs via `config/app_name-cron`, one of which assumes that this is a Blacklight app. The first cronjob will clear the Blacklight DB of searches using `rails blacklight:delete_old_searches`. This will raise an error if Blacklight is not installed.
+
+
+`entrypoint.sh`, assumes you are using a sqlite db in production. On startup, if it doesn't find `/app/db/production.sqlite3` it will re-run database migrations. Remove this block if you're using an external db.
+
+
 ### For development
 
 Run the app:
@@ -19,9 +29,13 @@ docker-compose down
 
 ### For deployment
 
-Building the `app_name` image:
+Building the `app_name` image locally:
 ```
-docker build --build-arg MASTER_KEY=$(cat ./config/master.key) -t app_name .
+DOCKER_BUILDKIT=1 docker build --secret id=master_key,src=config/master.key -t app_name .
+```
+On Windows:
+```
+$env:DOCKER_BUILDKIT=1; docker build --secret id=master_key,src=config/master.key -t app_name .
 ```
 
 Running the image
